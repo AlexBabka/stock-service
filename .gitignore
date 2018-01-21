@@ -1,0 +1,12 @@
+### Maven template
+target/
+
+### IDE files
+.idea/
+*.iml
+.project
+.settings/
+.classpath
+
+### Log files
+logs/*
