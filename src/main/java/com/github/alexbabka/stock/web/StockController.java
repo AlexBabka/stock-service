@@ -30,7 +30,8 @@ public class StockController {
 
     @ApiOperation(value = "Find all stocks", notes = "Retrieving the collection of stocks", response = StockModel[].class)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Success", response = StockModel[].class)
+            @ApiResponse(code = 200, message = "Success", response = StockModel[].class),
+            @ApiResponse(code = 403, message = "Forbidden")
     })
     @GetMapping(value = "stocks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<StockModel> getAll() {
@@ -40,6 +41,7 @@ public class StockController {
     @ApiOperation(value = "Find stock by id", notes = "Retrieving stock by provided id", response = StockModel.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success", response = StockModel.class),
+            @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Not found")
     })
     @GetMapping(value = "stocks/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -50,6 +52,7 @@ public class StockController {
     @ApiOperation(value = "Update stock price", notes = "Update price for a particular stock, identified by id")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Not found")
     })
     @PutMapping(value = "stocks/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -62,7 +65,8 @@ public class StockController {
             notes = "Create new stock according to the provided model")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success", response = StockModel.class),
-            @ApiResponse(code = 400, message = "Bad request", response = ApiError.class)
+            @ApiResponse(code = 400, message = "Bad request", response = ApiError.class),
+            @ApiResponse(code = 403, message = "Forbidden")
     })
     @PostMapping(value = "stocks", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<StockModel> createStock(@Valid @RequestBody StockModel stockModel) {

@@ -2,12 +2,15 @@ package com.github.alexbabka.stock.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.alexbabka.stock.service.model.StockModel;
+import com.github.alexbabka.stock.web.security.ApiCredentials;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,16 +27,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class StockControllerTest {
-    public static final String STOCKS_API_BASE_PATH = "/api/v1/stocks";
+    private static final String STOCKS_API_BASE_PATH = "/api/v1/stocks";
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
 
+    private String jwtToken;
+
+    @Before
+    public void setUp() throws Exception {
+        byte[] payload = objectMapper.writeValueAsBytes(new ApiCredentials("admin", "password"));
+
+        // Get security token before test execution
+        this.jwtToken = mockMvc.perform(post("/token")
+                .content(payload))
+                .andReturn().getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+    }
+
     @Test
     public void shouldReturnAllStocks() throws Exception {
         mockMvc.perform(get(STOCKS_API_BASE_PATH)
+                .header("Authorization", jwtToken)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.hasSize(Matchers.greaterThanOrEqualTo(5))));
@@ -42,6 +58,7 @@ public class StockControllerTest {
     @Test
     public void shouldFindStockById() throws Exception {
         mockMvc.perform(get(STOCKS_API_BASE_PATH + "/1")
+                .header("Authorization", jwtToken)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Matchers.is(1)))
@@ -53,6 +70,7 @@ public class StockControllerTest {
     @Test
     public void shouldNotFindStock() throws Exception {
         mockMvc.perform(get(STOCKS_API_BASE_PATH + "/100")
+                .header("Authorization", jwtToken)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isNotFound());
     }
@@ -68,12 +86,14 @@ public class StockControllerTest {
 
         // update price
         mockMvc.perform(put(STOCKS_API_BASE_PATH + "/2")
+                .header("Authorization", jwtToken)
                 .content(objectMapper.writeValueAsBytes(stockModel))
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isOk());
 
         // Check stock is actually updated
         mockMvc.perform(get(STOCKS_API_BASE_PATH + "/2")
+                .header("Authorization", jwtToken)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Matchers.is(2)))
@@ -92,6 +112,7 @@ public class StockControllerTest {
         stockModel.setCurrentPrice(price);
 
         mockMvc.perform(post(STOCKS_API_BASE_PATH)
+                .header("Authorization", jwtToken)
                 .content(objectMapper.writeValueAsBytes(stockModel))
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isCreated())
@@ -107,6 +128,7 @@ public class StockControllerTest {
         stockModel.setCurrentPrice(new BigDecimal("12.9"));
 
         mockMvc.perform(post(STOCKS_API_BASE_PATH)
+                .header("Authorization", jwtToken)
                 .content(objectMapper.writeValueAsBytes(stockModel))
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isBadRequest());
@@ -118,6 +140,7 @@ public class StockControllerTest {
         stockModel.setName("New stock");
 
         mockMvc.perform(post(STOCKS_API_BASE_PATH)
+                .header("Authorization", jwtToken)
                 .content(objectMapper.writeValueAsBytes(stockModel))
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isBadRequest());
