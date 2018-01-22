@@ -1,0 +1,34 @@
+{
+  "name": "stock-service-app-ui",
+  "version": "1.0.0",
+  "description": "Displaying stocks on Web UI",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:AlexBabka/stock-service.git"
+  },
+  "keywords": [
+    "rest",
+    "jwt",
+    "spring boot",
+    "react"
+  ],
+  "author": "Oleksii Babka",
+  "dependencies": {
+    "bootswatch": "^4.0.0",
+    "react": "^15.3.2",
+    "react-bootstrap": "^0.32.0",
+    "react-dom": "^15.3.2",
+    "rest": "^1.3.1",
+    "webpack": "^2.7.0"
+  },
+  "scripts": {
+    "watch": "webpack --watch -d"
+  },
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.7",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0"
+  }
+}

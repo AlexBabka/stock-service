@@ -27,6 +27,7 @@ public class StockServiceApplication {
 
     @Bean
     CommandLineRunner init(StockRepository stockRepository) {
+        // Initialized with dummy data for testing purposes
         return args -> Arrays.asList("ABN", "ING", "RABO", "SNS", "BUNQ")
                 .forEach(
                         name -> {

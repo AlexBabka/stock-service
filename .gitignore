@@ -10,3 +10,6 @@ target/
 
 ### Log files
 logs/*
+
+### Node libs
+node_modules
